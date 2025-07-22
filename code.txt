@@ -1,0 +1,122 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+struct Book {
+    int id;
+    string title;
+    string author;
+    bool isAvailable;
+
+    Book(int id, string title, string author) {
+        this->id = id;
+        this->title = title;
+        this->author = author;
+        this->isAvailable = true;
+    }
+};
+
+vector<Book> library;
+
+void addBook() {
+    int id;
+    string title, author;
+    cout << "Enter book ID: ";
+    cin >> id;
+    cin.ignore();
+    cout << "Enter book title: ";
+    getline(cin, title);
+    cout << "Enter book author: ";
+    getline(cin, author);
+    library.push_back(Book(id, title, author));
+    cout << "Book added successfully.\n";
+}
+
+void displayBooks() {
+    cout << "\n--- All Books ---\n";
+    for (auto &book : library) {
+        cout << "ID: " << book.id << "\nTitle: " << book.title
+             << "\nAuthor: " << book.author
+             << "\nStatus: " << (book.isAvailable ? "Available" : "Borrowed") << "\n\n";
+    }
+}
+
+void searchBook() {
+    string searchTitle;
+    cin.ignore();
+    cout << "Enter title to search: ";
+    getline(cin, searchTitle);
+    bool found = false;
+
+    for (auto &book : library) {
+        if (book.title.find(searchTitle) != string::npos) {
+            cout << "\nFound Book:\nID: " << book.id << "\nTitle: " << book.title
+                 << "\nAuthor: " << book.author
+                 << "\nStatus: " << (book.isAvailable ? "Available" : "Borrowed") << "\n";
+            found = true;
+        }
+    }
+
+    if (!found) cout << "No book found with that title.\n";
+}
+
+void borrowBook() {
+    int id;
+    cout << "Enter book ID to borrow: ";
+    cin >> id;
+    for (auto &book : library) {
+        if (book.id == id) {
+            if (book.isAvailable) {
+                book.isAvailable = false;
+                cout << "You have borrowed the book: " << book.title << "\n";
+                return;
+            } else {
+                cout << "Book is already borrowed.\n";
+                return;
+            }
+        }
+    }
+    cout << "Book ID not found.\n";
+}
+
+void returnBook() {
+    int id;
+    cout << "Enter book ID to return: ";
+    cin >> id;
+    for (auto &book : library) {
+        if (book.id == id) {
+            if (!book.isAvailable) {
+                book.isAvailable = true;
+                cout << "You have returned the book: " << book.title << "\n";
+                return;
+            } else {
+                cout << "Book was not borrowed.\n";
+                return;
+            }
+        }
+    }
+    cout << "Book ID not found.\n";
+}
+
+int main() {
+    int choice;
+    do {
+        cout << "\n=== Library Tracker Menu ===\n";
+        cout << "1. Add Book\n2. Display Books\n3. Search Book\n4. Borrow Book\n5. Return Book\n0. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: addBook(); break;
+            case 2: displayBooks(); break;
+            case 3: searchBook(); break;
+            case 4: borrowBook(); break;
+            case 5: returnBook(); break;
+            case 0: cout << "Exiting...\n"; break;
+            default: cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 0);
+
+    return 0;
+}
